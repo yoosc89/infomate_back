@@ -17,16 +17,16 @@ import java.util.Map;
 @Slf4j
 public class ServerApiService {
 
-//    @Value("${second.server.host}")
+    @Value("${second.server.host}")
     private String SECOND_SERVER_HOST;
 
-//    @Value("${second.server.port}")
+    @Value("${second.server.port}")
     private String SECOND_SERVER_POST;
 
-//    @Value("${second.server.protocol}")
+    @Value("${second.server.protocol}")
     private String SECOND_SERVER_PROTOCOL;
 
-//    @Value("${second.server.api-token}")
+    @Value("${second.server.api-token}")
     private List<String> SECOND_SERVER_API_TOKEN;
 
     private final RestTemplate restTemplate;
@@ -35,24 +35,27 @@ public class ServerApiService {
         this.restTemplate = restTemplate;
     }
 
-    public void scheduleInsertApi(ScheduleDTO scheduleDTO) {
+    public void scheduleInsertApi(CalendarAlertDTO calendarAlertDTO, HttpMethod httpMethod) {
         String uri = SECOND_SERVER_PROTOCOL + "://" + SECOND_SERVER_HOST + ":" + SECOND_SERVER_POST + "/calendar/alert";
         log.info("[ServerApiService](scheduleInsertApi) uri : {}", uri);
 
         restTemplate.exchange(
                 uri,
-                HttpMethod.POST,
-                ResponseEntity.ok().body(
-                        CalendarAlertDTO.builder()
-                                .scheduleId(scheduleDTO.getId())
-                                .scheduleTitle(scheduleDTO.getTitle())
-                                .memberCode(2)
-                                .calendarName("")
-                                .endDate(scheduleDTO.getEndDate())
-                                .important(scheduleDTO.getImportant())
-                                .build()),
-//                String.class
-                ScheduleDTO.class
+                httpMethod,
+                ResponseEntity.ok().body(calendarAlertDTO),
+                String.class
+        );
+    }
+
+    public void scheduleDeleteApi(Integer scheduleId){
+        String uri = SECOND_SERVER_PROTOCOL + "://" + SECOND_SERVER_HOST + ":" + SECOND_SERVER_POST + "/calendar/alert";
+        log.info("[ServerApiService](scheduleInsertApi) uri : {}", uri);
+
+        restTemplate.exchange(
+                uri,
+                HttpMethod.DELETE,
+                ResponseEntity.ok().body(scheduleId),
+                String.class
         );
     }
 

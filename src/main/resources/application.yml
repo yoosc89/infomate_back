@@ -1,6 +1,14 @@
 server:
   port: 8989
 
+second:
+  server:
+    host: localhost
+    port: 9091
+    protocol: http
+    api-token: c276558aab1cb2462c613aeca8a61301d20a0cff12e0717c3e5698b5396ae044caf72678ed3f59c7f5ab58605ec9def97f886cbb1107853c4ddadee5c7f32a9c
+
+
 spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver

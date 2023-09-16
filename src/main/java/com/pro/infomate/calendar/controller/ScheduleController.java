@@ -1,5 +1,7 @@
 package com.pro.infomate.calendar.controller;
 
+import com.pro.infomate.calendar.api.CalendarAlertDTO;
+import com.pro.infomate.calendar.api.ServerApiService;
 import com.pro.infomate.calendar.dto.DayPerCountDTO;
 import com.pro.infomate.calendar.dto.ScheduleDTO;
 import com.pro.infomate.calendar.service.ScheduleService;
@@ -12,10 +14,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +34,8 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
 
     private final EmployeeService employeeService;
+
+    private final ServerApiService serverApiService;
 
     @Operation(tags = "Schedule", description = "기간별 일별 일정 갯수 ", summary = "일별 일정 갯수 표시 API")
     @GetMapping("/dayCount")
@@ -101,8 +107,11 @@ public class ScheduleController {
                                                   @AuthenticationPrincipal MemberDTO member){
 
         int memberCode = member.getMemberCode();
+
         log.info("[ScheduleController](updateById) scheduleDTO : {} ", scheduleDTO);
-        scheduleService.updateById(scheduleDTO, memberCode);
+        CalendarAlertDTO calendarAlertDTO = scheduleService.updateById(scheduleDTO, memberCode);
+        serverApiService.scheduleInsertApi(calendarAlertDTO, HttpMethod.PATCH);
+
         return ResponseEntity.ok()
                 .body(ResponseDTO.builder()
                         .status(HttpStatus.OK)
@@ -119,7 +128,8 @@ public class ScheduleController {
         int deptCode = member.getDepartment().getDeptCode();
         log.info("[ScheduleController](deleteById) scheduleId : {} ", scheduleId);
 
-        scheduleService.deleteById(scheduleId, memberCode, deptCode);
+        boolean success = scheduleService.deleteById(scheduleId, memberCode, deptCode);
+        if (success) serverApiService.scheduleDeleteApi(scheduleId);
 
         return ResponseEntity.ok()
                 .body(ResponseDTO.builder()
@@ -135,7 +145,10 @@ public class ScheduleController {
         int memberCode = member.getMemberCode();
         log.info("[ScheduleController](insertSchedule) scheduleDTO : {} ", scheduleDTO);
 
-        scheduleService.insertSchedule(scheduleDTO, memberCode);
+        CalendarAlertDTO calendarAlertDTO = scheduleService.insertSchedule(scheduleDTO, memberCode);
+
+        serverApiService.scheduleInsertApi(calendarAlertDTO, HttpMethod.POST);
+
         return ResponseEntity.ok()
                 .body(ResponseDTO.builder()
                         .status(HttpStatus.OK)

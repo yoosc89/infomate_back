@@ -1,5 +1,6 @@
 package com.pro.infomate.calendar.service;
 
+import com.pro.infomate.calendar.api.CalendarAlertDTO;
 import com.pro.infomate.calendar.dto.CalendarDTO;
 import com.pro.infomate.calendar.dto.DayPerCountDTO;
 import com.pro.infomate.calendar.dto.ScheduleDTO;
@@ -78,7 +79,7 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void updateById(ScheduleDTO scheduleDTO, int memberCode) {
+    public CalendarAlertDTO updateById(ScheduleDTO scheduleDTO, int memberCode) {
         log.info("[ScheduleService](updateById) schedule : {}",scheduleDTO);
 
         Schedule entitySchedule = scheduleRepository
@@ -98,7 +99,19 @@ public class ScheduleService {
         log.info("[ScheduleService](updateById) entitySchedule : {}",entitySchedule);
         entitySchedule.update(modelMapper.map(scheduleDTO, Schedule.class));
 
-        if(scheduleDTO.getParticipantList() == null) return;
+
+        CalendarAlertDTO calendarAlertDTO = CalendarAlertDTO.builder()
+                .scheduleId(entitySchedule.getId())
+                .scheduleTitle(entitySchedule.getTitle())
+                .startDate(entitySchedule.getStartDate())
+                .endDate(entitySchedule.getEndDate())
+                .important(entitySchedule.getImportant())
+                .allDay(entitySchedule.getAllDay())
+                .memberCode(memberCode)
+                .alertDate(entitySchedule.getStartDate().minusMinutes(30))
+                .build();
+
+        if(scheduleDTO.getParticipantList() == null) return calendarAlertDTO;
 
         List<Participant> participant = scheduleDTO.getParticipantList().stream().map(item -> modelMapper.map(item, Participant.class)).collect(Collectors.toList());
         participant = participant.stream().map(participant1 -> {
@@ -109,15 +122,15 @@ public class ScheduleService {
         participantRepository.deleteByScheduleCode(scheduleDTO.getId());
         participantRepository.saveAll(participant);
 
+        return calendarAlertDTO;
     }
 
     @Transactional
-    public void deleteById(int scheduleId, int memberCode, int deptCode) {
+    public boolean deleteById(int scheduleId, int memberCode, int deptCode) {
 
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(()-> new NotFindDataException("삭제할 일정을 찾을 수 없습니다."));
-//        Member member = memberRepository.findById(memberCode)
-//                .orElseThrow(()-> new NotFindDataException("계정을 찾을 수 없습니다."));
+
 
         log.info("[ScheduleService](deleteById) deptCode : {}",deptCode);
         log.info("[ScheduleService](deleteById) schedule.getCalendar().getDepartmentCode() : {}", schedule.getCalendar().getDepartmentCode());
@@ -133,12 +146,12 @@ public class ScheduleService {
             throw new NotAuthenticationMember("삭제할 권한이 존재하지 않습니다.");
         }
 
-
+        return true;
 
     }
 
     @Transactional
-    public void insertSchedule(ScheduleDTO scheduleDTO, int memberCode) {
+    public CalendarAlertDTO insertSchedule(ScheduleDTO scheduleDTO, int memberCode) {
         log.info("[ScheduleService](insertSchedule) scheduleDTO : {}", scheduleDTO);
         log.info("[ScheduleService](insertSchedule) memberCode : {}", memberCode);
 
@@ -164,7 +177,20 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
 
-        if(scheduleDTO.getParticipantList() == null) return;
+        CalendarAlertDTO calendarAlertDTO = CalendarAlertDTO.builder()
+                .scheduleId(schedule.getId())
+                .scheduleTitle(schedule.getTitle())
+                .startDate(schedule.getStartDate())
+                .endDate(schedule.getEndDate())
+                .important(schedule.getImportant())
+                .allDay(schedule.getAllDay())
+                .memberCode(memberCode)
+                .alertDate(schedule.getStartDate().minusMinutes(30))
+                .build();
+
+
+
+        if(scheduleDTO.getParticipantList() == null) return calendarAlertDTO;
 
         List<Participant> participant = scheduleDTO.getParticipantList().stream().map(item -> modelMapper.map(item, Participant.class)).collect(Collectors.toList());
         participant = participant.stream().map(participant1 -> {
@@ -174,6 +200,8 @@ public class ScheduleService {
         log.info("[ScheduleService](insertSchedule) schedule.getId() : {}", schedule.getId());
         participantRepository.saveAll(participant);
         log.info("[ScheduleService](insertSchedule) schedule : {}",schedule);
+
+        return calendarAlertDTO;
     }
 
     public List<ScheduleDTO> reminder(int memberCode) {
