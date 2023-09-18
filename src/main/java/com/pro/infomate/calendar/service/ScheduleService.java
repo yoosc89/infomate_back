@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -177,6 +178,10 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
 
+        LocalDateTime alertDate = schedule.getAllDay()
+                ? schedule.getStartDate().minusDays(1).withHour(15)
+                : schedule.getStartDate().minusMinutes(30);
+
         CalendarAlertDTO calendarAlertDTO = CalendarAlertDTO.builder()
                 .scheduleId(schedule.getId())
                 .scheduleTitle(schedule.getTitle())
@@ -185,10 +190,8 @@ public class ScheduleService {
                 .important(schedule.getImportant())
                 .allDay(schedule.getAllDay())
                 .memberCode(memberCode)
-                .alertDate(schedule.getStartDate().minusMinutes(30))
+                .alertDate(alertDate)
                 .build();
-
-
 
         if(scheduleDTO.getParticipantList() == null) return calendarAlertDTO;
 

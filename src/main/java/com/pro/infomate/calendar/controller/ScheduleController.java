@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -110,7 +111,10 @@ public class ScheduleController {
 
         log.info("[ScheduleController](updateById) scheduleDTO : {} ", scheduleDTO);
         CalendarAlertDTO calendarAlertDTO = scheduleService.updateById(scheduleDTO, memberCode);
-        serverApiService.scheduleInsertApi(calendarAlertDTO, HttpMethod.PATCH);
+
+        log.info("[ScheduleController](updateById) calendarAlertDTO : {} ", calendarAlertDTO);
+
+        serverApiService.scheduleInsertApi(calendarAlertDTO, HttpMethod.PUT);
 
         return ResponseEntity.ok()
                 .body(ResponseDTO.builder()
