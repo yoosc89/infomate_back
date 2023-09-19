@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/v1")
 @Slf4j
@@ -37,8 +41,14 @@ public class MemberController {
     }
 
     @GetMapping("/userinfo")
-    public ResponseEntity<Integer> serverUserInfo(@AuthenticationPrincipal MemberDTO memberDTO){
+    public ResponseEntity<Map<String, Object>> serverUserInfo(@AuthenticationPrincipal MemberDTO memberDTO){
         log.info("[MemberController](serverUserInfo) memberDTO : {}", memberDTO);
-        return  ResponseEntity.ok(memberDTO.getMemberCode());
+        Map<String, Object> result = new HashMap<>();
+        result.put("memberCode", memberDTO.getMemberCode());
+        result.put("memberName", memberDTO.getMemberName());
+
+        log.info("[MemberController](serverUserInfo) result : {}", result);
+
+        return  ResponseEntity.ok(result);
     }
 }

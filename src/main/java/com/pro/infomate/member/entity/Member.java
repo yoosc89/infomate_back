@@ -3,6 +3,7 @@ package com.pro.infomate.member.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.pro.infomate.calendar.entity.Participant;
+import com.pro.infomate.chat.entity.ChatRoomMember;
 import com.pro.infomate.work.entity.Off;
 import com.pro.infomate.work.entity.Work;
 import com.pro.infomate.addressbook.entity.Contact;
@@ -121,6 +122,10 @@ public class Member {
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Participant> participantList;
+
+    @JsonIgnore
+    @OneToMany
+    private List<ChatRoomMember> chatRoomMember;
 
     @Override
     public String toString() {
