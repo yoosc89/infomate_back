@@ -14,11 +14,7 @@ import java.io.Serializable;
 @ToString
 public class ChatRoomMemberPK implements Serializable {
 
-    @Id
-    @Column(name = "CHATROOM_CODE")
     private int chatRoomCode;
 
-    @Id
-    @Column(name = "MEMBER_CODE")
     private int memberCode;
 }

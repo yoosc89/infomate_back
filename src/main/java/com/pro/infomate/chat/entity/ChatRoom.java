@@ -1,14 +1,13 @@
 package com.pro.infomate.chat.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.pro.infomate.member.entity.Member;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,6 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
+@ToString
 public class ChatRoom {
 
     @Id
@@ -40,7 +41,12 @@ public class ChatRoom {
     @Column(name = "CHATROOM_CREATE_DATE")
     private LocalDateTime chatRoomCreateDate;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, targetEntity = ChatRoomMember.class)
     @JoinColumn(name = "CHATROOM_CODE")
-    private List<ChatRoomMember> chatRoomMemberList;
+    private List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+
+    public void addChatRoomMember(Member member) {
+        this.chatRoomMemberList = new ArrayList<>();
+        this.chatRoomMemberList.add(new ChatRoomMember(member, this));
+    }
 }

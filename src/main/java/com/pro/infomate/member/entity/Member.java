@@ -124,8 +124,9 @@ public class Member {
     private List<Participant> participantList;
 
     @JsonIgnore
-    @OneToMany
-    private List<ChatRoomMember> chatRoomMember;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "MEMBER_CODE")
+    private List<ChatRoomMember> chatRoomMember = new ArrayList<>();
 
     @Override
     public String toString() {
