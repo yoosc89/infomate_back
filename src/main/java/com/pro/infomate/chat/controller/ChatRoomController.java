@@ -20,17 +20,18 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/chat")
 public class ChatRoomController {
-    private final ChatRoomService chatRoomService;
 
+    private final ChatRoomService chatRoomService;
 
     @GetMapping("/roomlist")
     public ResponseEntity<ResponseDTO> findBdyChatRoomList(@AuthenticationPrincipal MemberDTO memberDTO){
 
+        log.info("[ChatRoomController](findBdyChatRoomList) start");
         return ResponseEntity.ok().body(ResponseDTO.builder()
-                    .message("불러오기 성공")
-                    .data(chatRoomService.findByChatRoomList(memberDTO.getMemberCode()))
-                    .build());
-
+                .status(HttpStatus.OK)
+                .message("불러오기 성공")
+                .data(chatRoomService.findByChatRoomList(memberDTO.getMemberCode()))
+                .build());
     }
 
     @GetMapping("/room/{roomCode}")
@@ -59,7 +60,7 @@ public class ChatRoomController {
                 );
     }
 
-    @PatchMapping("/room/{roomCode}")
+    @PatchMapping("/room/addmember/{roomCode}")
     public ResponseEntity<ResponseDTO> addMemberChatroom(@PathVariable int roomCode, @RequestBody List<Integer> memberList){
         log.info("[ChatRoomController](registChatroom) memberList : {}", memberList);
         chatRoomService.addRoomMember(roomCode, memberList);

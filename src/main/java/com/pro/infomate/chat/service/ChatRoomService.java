@@ -7,11 +7,9 @@ import com.pro.infomate.chat.entity.ChatRoomMember;
 import com.pro.infomate.chat.repository.ChatRoomMemberRepository;
 import com.pro.infomate.chat.repository.ChatRoomRepository;
 import com.pro.infomate.exception.NotFindDataException;
-import com.pro.infomate.member.entity.Member;
 import com.pro.infomate.member.repository.MemberRepository;
-import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.PackagePrivate;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
@@ -89,8 +88,11 @@ public class ChatRoomService {
 
     public List<ChatRoomDTO> findByChatRoomList(int memberCode) {
 
+        log.info("[ChatRoomService](findByChatRoomList) memberCode : {}", memberCode);
+
         List<ChatRoom> chatRoomList = chatRoomRepository.findAllByChatroom(memberCode);
 
+        log.info("[ChatRoomService](findByChatRoomList) chatRoomList : {}", chatRoomList);
 
         return chatRoomList.stream()
                 .map(chatRoom ->
