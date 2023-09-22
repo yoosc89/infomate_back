@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -22,4 +23,11 @@ public class ChatRoomDTO {
 
     private List<ChatRoomMemberDTO> chatRoomMemberList;
 
+    @Override
+    public String toString() {
+        return "ChatRoomDTO{" +
+                "chatRoomCode=" + chatRoomCode +
+                ", chatRoomName='" + chatRoomName + '\'' +
+                '}';
+    }
 }

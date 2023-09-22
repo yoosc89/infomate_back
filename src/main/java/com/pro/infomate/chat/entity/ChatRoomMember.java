@@ -10,7 +10,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @IdClass(ChatRoomMemberPK.class)
-@ToString
 public class ChatRoomMember {
 
     @Id
@@ -37,5 +36,13 @@ public class ChatRoomMember {
     public ChatRoomMember(Member member, ChatRoom chatRoom) {
         this.member = member;
         this.chatRoom = chatRoom;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatRoomMember{" +
+                "chatRoomCode=" + chatRoomCode +
+                ", memberCode=" + memberCode +
+                '}';
     }
 }

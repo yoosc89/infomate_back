@@ -7,14 +7,15 @@ import com.pro.infomate.chat.entity.ChatRoomMember;
 import com.pro.infomate.chat.repository.ChatRoomMemberRepository;
 import com.pro.infomate.chat.repository.ChatRoomRepository;
 import com.pro.infomate.exception.NotFindDataException;
+import com.pro.infomate.member.entity.Member;
 import com.pro.infomate.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.buf.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +40,18 @@ public class ChatRoomService {
     }
 
     public ChatRoomDTO registChatRooms(List<Integer> memberList) {
+
+        List<Member> members = memberRepository.findAllById(memberList);
+
+        log.info("[ChatRoomService](registChatRooms) members : {}", members);
+
+        String chatRoomName = StringUtils.join(
+                members.stream().map(member ->
+                        String.valueOf(member.getMemberName())).collect(Collectors.toList()
+                ));
+
         ChatRoom chatRoom = ChatRoom.builder()
-                .chatRoomName("채팅방 테스트")
+                .chatRoomName(chatRoomName)
                 .chatRoomCreateDate(LocalDateTime.now())
                 .build();
 
@@ -94,9 +105,17 @@ public class ChatRoomService {
 
         log.info("[ChatRoomService](findByChatRoomList) chatRoomList : {}", chatRoomList);
 
+
+
         return chatRoomList.stream()
-                .map(chatRoom ->
-                        modelMapper.map(chatRoom, ChatRoomDTO.class))
+                .map(chatRoom -> {
+                    chatRoom.setChatRoomMemberList(null);
+                    return modelMapper.map(chatRoom, ChatRoomDTO.class);
+                })
+                .map(chatRoomDTO -> {
+                    chatRoomDTO.setChatRoomMemberList(null);
+                    return chatRoomDTO;
+                })
                 .collect(Collectors.toList());
     }
 }

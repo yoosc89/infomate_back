@@ -1,10 +1,8 @@
 package com.pro.infomate.chat.dto;
 
+import com.pro.infomate.chat.entity.ChatRoom;
 import com.pro.infomate.member.dto.MemberDTO;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,6 +14,15 @@ public class ChatRoomMemberDTO {
 
     private int memberCode;
 
-    private MemberDTO memberList;
+    private MemberDTO member;
 
+    private ChatRoomDTO chatRoom;
+
+    @Override
+    public String toString() {
+        return "ChatRoomMemberDTO{" +
+                "chatRoomCode=" + chatRoomCode +
+                ", memberCode=" + memberCode +
+                '}';
+    }
 }

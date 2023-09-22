@@ -24,7 +24,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-@ToString
+//@ToString
 public class ChatRoom {
 
     @Id
@@ -43,10 +43,19 @@ public class ChatRoom {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, targetEntity = ChatRoomMember.class)
     @JoinColumn(name = "CHATROOM_CODE")
-    private List<ChatRoomMember> chatRoomMemberList = new ArrayList<>();
+    private List<ChatRoomMember> chatRoomMemberList;
 
     public void addChatRoomMember(Member member) {
         this.chatRoomMemberList = new ArrayList<>();
         this.chatRoomMemberList.add(new ChatRoomMember(member, this));
+    }
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+                "chatRoomCode=" + chatRoomCode +
+                ", chatRoomName='" + chatRoomName + '\'' +
+                ", chatRoomCreateDate=" + chatRoomCreateDate +
+                '}';
     }
 }

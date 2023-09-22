@@ -1,17 +1,18 @@
 package com.pro.infomate.chat.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
 import java.io.Serializable;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+
 @Setter
-@ToString
 public class ChatRoomMemberPK implements Serializable {
 
     private int chatRoomCode;

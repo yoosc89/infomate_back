@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,11 +50,15 @@ public class ChatRoomController {
 
 
     @PostMapping("/room/regist")
-    public ResponseEntity<ResponseDTO> registChatroom(@RequestBody List<Integer> memberList){
+    public ResponseEntity<ResponseDTO> registChatroom(@RequestBody List<Integer> memberList,
+                                                      @AuthenticationPrincipal MemberDTO memberDTO){
+
         log.info("[ChatRoomController](registChatroom) memberList : {}", memberList);
+        memberList.add(memberDTO.getMemberCode());
 
         return ResponseEntity.ok()
                 .body(ResponseDTO.builder()
+                        .status(HttpStatus.OK)
                         .message("성공적으로 생성되었습니다.")
                         .data(chatRoomService.registChatRooms(memberList))
                         .build()

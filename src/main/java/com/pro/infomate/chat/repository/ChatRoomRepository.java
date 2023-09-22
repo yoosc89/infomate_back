@@ -9,8 +9,10 @@ import java.util.List;
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Integer> {
 
     @Query(value = "select c " +
-            "from ChatRoom c, ChatRoomMember cm " +
-            "where cm.memberCode = :memberCode"
+            "from ChatRoom c " +
+            "where c.chatRoomCode in (select cm.chatRoomCode " +
+                                       "from ChatRoomMember cm " +
+                                      "where cm.memberCode = :memberCode)"
     )
     List<ChatRoom> findAllByChatroom(int memberCode);
 }
